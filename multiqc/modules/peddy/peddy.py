@@ -122,6 +122,14 @@ class MultiqcModule(BaseMultiqcModule):
                 parsed_data[s_name] = dict()
                 for i, v in enumerate(s):
                     if i not in s_name_idx:
+                        # the sex check error is reported as True if there is a sex mismatch and False if it's as expected
+                        # In the report "True" is always displayed in a green box and False is displayed in a red warning box
+                        # therefore all sex mismatches are green and 'passed tests' are red
+                        # To correct this swap true and false values
+                        # If it's the error column in the sex check file
+                        if headers[i] == "error" and pattern =="sex_check":
+                            # If False change to true, else set to False
+                            v = "True" if v == "False" else "False"
                         try:
                             # add the pattern as a suffix to key
                             parsed_data[s_name][headers[i] + "_" + pattern] = float(v)
@@ -139,20 +147,20 @@ class MultiqcModule(BaseMultiqcModule):
         family_ids = [ x.get('family_id') for x in self.peddy_data.values() ]
 
         headers = OrderedDict()
-        #headers['family_id'] = {
-        #    'title': 'Family ID',
-        #    'hidden': True if all([v == family_ids[0] for v in family_ids]) else False
-        #}
-        #headers['ancestry-prediction'] = {
-        #    'title': 'Ancestry',
-        #    'description': 'Ancestry Prediction',
-        #}
+        headers['family_id'] = {
+            'title': 'Family ID',
+            'hidden': True if all([v == family_ids[0] for v in family_ids]) else False
+        }
+        headers['ancestry-prediction'] = {
+            'title': 'Ancestry',
+            'description': 'Ancestry Prediction',
+        }
         headers['sex_het_ratio'] = {
             'title': 'Sex / Het Ratio',
         }
         headers['error_sex_check'] = {
-            'title': 'Sex Error',
-            'description': 'Error in sample sex prediction',
+            'title': 'Correct Sex',
+            'description': 'Displays False if error in sample sex prediction',
         }
         self.general_stats_addcols(self.peddy_data, headers)
 
