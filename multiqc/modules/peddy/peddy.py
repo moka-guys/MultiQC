@@ -122,11 +122,14 @@ class MultiqcModule(BaseMultiqcModule):
                 parsed_data[s_name] = dict()
                 for i, v in enumerate(s):
                     if i not in s_name_idx:
+                        # the sex check error is reported as True if there is a sex mismatch and False if it's as expected
+                        # In the report "True" is always displayed in a green box and False is displayed in a red warning box
+                        # therefore all sex mismatches are green and 'passed tests' are red
+                        # To correct this swap true and false values
+                        # If it's the error column in the sex check file
                         if headers[i] == "error" and pattern =="sex_check":
-                            if v == "True":
-                                v = "False"
-                            elif v == "False":
-                                v = "True"
+                            # If False change to true, else set to False
+                            v = "True" if v == "False" else "False"
                         try:
                             # add the pattern as a suffix to key
                             parsed_data[s_name][headers[i] + "_" + pattern] = float(v)
