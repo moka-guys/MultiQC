@@ -39,7 +39,7 @@ install_requires = [
         'networkx>=2',
         'lzstring',
         'jinja2>=2.9',
-        'matplotlib',
+        'matplotlib>=2.1.1,<3.0.0',
         'markdown',
         'numpy',
         'pyyaml',
