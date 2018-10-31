@@ -24,7 +24,7 @@ MultiQC was written by Phil Ewels (http://phil.ewels.co.uk) at SciLifeLab Sweden
 from setuptools import setup, find_packages
 import sys
 
-version = '1.4'
+version = '1.6'
 dl_version = 'master' if 'dev' in version else 'v{}'.format(version)
 
 print("""-----------------------------------
@@ -36,10 +36,9 @@ print("""-----------------------------------
 install_requires = [
         'click',
         'future>0.14.0',
-        'networkx>=2',
         'lzstring',
         'jinja2>=2.9',
-        'matplotlib',
+        'matplotlib>=2.1.1',
         'markdown',
         'numpy',
         'pyyaml',
@@ -47,8 +46,6 @@ install_requires = [
         'simplejson',
         'spectra>=0.0.10'
     ]
-if sys.version_info < (3, 4):
-    install_requires.append('enum34')
 
 setup(
     name = 'multiqc',
@@ -79,30 +76,38 @@ setup(
             'bowtie1 = multiqc.modules.bowtie1:MultiqcModule',
             'bowtie2 = multiqc.modules.bowtie2:MultiqcModule',
             'busco = multiqc.modules.busco:MultiqcModule',
+            'clipandmerge = multiqc.modules.clipandmerge:MultiqcModule',
             'clusterflow = multiqc.modules.clusterflow:MultiqcModule',
             'conpair = multiqc.modules.conpair:MultiqcModule',
             'custom_content = multiqc.modules.custom_content:custom_module_classes', # special case
             'cutadapt = multiqc.modules.cutadapt:MultiqcModule',
             'dragen_markdups = multiqc.modules.dragen_markdups:MultiqcModule',
             'disambiguate = multiqc.modules.disambiguate:MultiqcModule',
+            'dedup = multiqc.modules.dedup:MultiqcModule',
             'deeptools = multiqc.modules.deeptools:MultiqcModule',
+            'fastp = multiqc.modules.fastp:MultiqcModule',
             'fastq_screen = multiqc.modules.fastq_screen:MultiqcModule',
             'fastqc = multiqc.modules.fastqc:MultiqcModule',
             'featureCounts = multiqc.modules.featureCounts:MultiqcModule',
             'flexbar = multiqc.modules.flexbar:MultiqcModule',
             'gatk = multiqc.modules.gatk:MultiqcModule',
             'goleft_indexcov = multiqc.modules.goleft_indexcov:MultiqcModule',
+            'happy = multiqc.modules.happy:MultiqcModule',
             'hicexplorer = multiqc.modules.hicexplorer:MultiqcModule',
             'hicup = multiqc.modules.hicup:MultiqcModule',
+            'hicpro = multiqc.modules.hicpro:MultiqcModule',
             'hisat2 = multiqc.modules.hisat2:MultiqcModule',
             'homer = multiqc.modules.homer:MultiqcModule',
             'htseq = multiqc.modules.htseq:MultiqcModule',
             'interop = multiqc.modules.interop:MultiqcModule',
             'jellyfish = multiqc.modules.jellyfish:MultiqcModule',
             'kallisto = multiqc.modules.kallisto:MultiqcModule',
+            'kat = multiqc.modules.kat:MultiqcModule',
             'leehom = multiqc.modules.leehom:MultiqcModule',
+            'longranger = multiqc.modules.longranger:MultiqcModule',
             'macs2 = multiqc.modules.macs2:MultiqcModule',
             'methylQA = multiqc.modules.methylQA:MultiqcModule',
+            'mirtrace = multiqc.modules.mirtrace:MultiqcModule',
             'peddy = multiqc.modules.peddy:MultiqcModule',
             'picard = multiqc.modules.picard:MultiqcModule',
             'preseq = multiqc.modules.preseq:MultiqcModule',

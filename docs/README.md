@@ -14,11 +14,14 @@ MultiQC Modules:
     BioBloom Tools: modules/biobloomtools.md
     Cluster Flow: modules/clusterflow.md
     Cutadapt: modules/cutadapt.md
+    ClipAndMerge: modules/clipandmerge.md
     FastQ Screen: modules/fastq_screen.md
     FastQC: modules/fastqc.md
+    Fastp: modules/fastp.md
     Flexbar: modules/flexbar.md
     InterOp: modules/interop.md
     Jellyfish: modules/jellyfish.md
+    KAT: modules/kat.md
     leeHom: modules/leehom.md
     Skewer: modules/skewer.md
     SortMeRNA: modules/sortmerna.md
@@ -29,8 +32,10 @@ MultiQC Modules:
     Bowtie 2: modules/bowtie2.md
     BBMap: modules/bbmap.md
     HiCUP: modules/hicup.md
+    HiCPro: modules/hicpro.md
     HISAT2: modules/hisat2.md
     Kallisto: modules/kallisto.md
+    Long Ranger: modules/longranger.md
     Salmon: modules/salmon.md
     STAR: modules/star.md
     TopHat: modules/tophat.md
@@ -40,15 +45,18 @@ MultiQC Modules:
     BUSCO: modules/busco.md
     Conpair: modules/conpair.md
     Disambiguate: modules/disambiguate.md
+    DeDup: modules/dedup.md
     deepTools: modules/deeptools.md
     featureCounts: modules/featureCounts.md
     GATK: modules/gatk.md
     goleft_indexcov: modules/goleft_indexcov.md
+    Hap.py: modules/happy.md
     HiCExplorer: modules/hicexplorer.md
     HOMER: modules/homer.md
     HTSeq: modules/htseq.md
     MACS2: modules/macs2.md
     Methyl QA: modules/methylQA.md
+    miRTrace: modules/mirtrace.md
     Peddy: modules/peddy.md
     Picard: modules/picard.md
     Preseq: modules/preseq.md

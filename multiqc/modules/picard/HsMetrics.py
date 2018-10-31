@@ -69,20 +69,19 @@ def parse_reports(self):
         commadecimal = None
         for l in f['f']:
             # New log starting
-            if 'CalculateHsMetrics' in l or \
-               'CollectHsMetrics' in l and 'INPUT' in l:
+            if 'CalculateHsMetrics' in l or 'CollectHsMetrics' in l and 'INPUT' in l:
                 s_name = None
                 keys = None
 
                 # Pull sample name from input
-                fn_search = re.search(r"INPUT=(\[?[^\s]+\]?)", l)
+                fn_search = re.search(r"INPUT(?:=|\s+)(\[?[^\s]+\]?)", l, flags=re.IGNORECASE)
                 if fn_search:
                     s_name = os.path.basename(fn_search.group(1).strip('[]'))
                     s_name = self.clean_s_name(s_name, f['root'])
                     parsed_data[s_name] = dict()
 
             if s_name is not None:
-                if 'picard.analysis.directed.HsMetrics' in l and '## METRICS CLASS' in l:
+                if 'HsMetrics' in l and '## METRICS CLASS' in l:
                     keys = f['f'].readline().strip("\n").split("\t")
                 elif keys:
                     vals = l.strip("\n").split("\t")

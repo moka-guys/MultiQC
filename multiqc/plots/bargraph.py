@@ -72,7 +72,7 @@ def plot (data, cats=None, pconfig=None):
                 report.lint_errors.append(errmsg)
         # Check plot title format
         if not re.match( r'^[^:]*\S: \S[^:]*$', pconfig.get('title', '')):
-            errmsg = "LINT: {}Bargraph title did not match format 'Module: Plot Name' (found '{}')".format(modname, pconfig.get('title', ''))
+            errmsg = "LINT: {} Bargraph title did not match format 'Module: Plot Name' (found '{}')".format(modname, pconfig.get('title', ''))
             logger.error(errmsg)
             report.lint_errors.append(errmsg)
 
@@ -385,9 +385,10 @@ def matplotlib_bargraph (plotdata, plotsamples, pconfig=None):
 
             # Plot bars
             dlabels = []
+            prev_values = None
             for idx, d in enumerate(pdata):
                 # Plot percentages
-                values = d['data']
+                values = [x for x in d['data']]
                 if len(values) < len(y_ind):
                     values.extend([0] * (len(y_ind) - len(values)))
                 if plot_pct is True:
@@ -403,7 +404,7 @@ def matplotlib_bargraph (plotdata, plotsamples, pconfig=None):
                     prevdata = [0] * len(plotsamples[pidx])
                 else:
                     for i, p in enumerate(prevdata):
-                        prevdata[i] += pdata[idx-1]['data'][i]
+                        prevdata[i] += prev_values[i]
                 # Default colour index
                 cidx = idx
                 while cidx >= len(default_colors):
@@ -420,6 +421,7 @@ def matplotlib_bargraph (plotdata, plotsamples, pconfig=None):
                     align = 'center',
                     linewidth = pconfig.get('borderWidth', 0)
                 )
+                prev_values = values
 
             # Tidy up axes
             axes.tick_params(labelsize=8, direction='out', left=False, right=False, top=False, bottom=False)
