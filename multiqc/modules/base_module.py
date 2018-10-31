@@ -71,6 +71,7 @@ class BaseMultiqcModule(object):
         # Pick up path filters if specified.
         # Allows modules to be called multiple times with different sets of files
         path_filters = getattr(self, 'mod_cust_config', {}).get('path_filters')
+        path_filters_exclude = getattr(self, 'mod_cust_config', {}).get('path_filters_exclude')
 
         # Old, depreciated syntax support. Likely to be removed in a future version.
         if isinstance(sp_key, dict):
@@ -89,15 +90,24 @@ class BaseMultiqcModule(object):
             return
 
         for f in report.files[sp_key]:
+            # Make a note of the filename so that we can report it if something crashes
+            report.last_found_file = os.path.join(f['root'], f['fn'])
 
-            # If path_filters is given, skip unless match
-            if path_filters is not None and len(path_filters) > 0:
-                if not all([ fnmatch.fnmatch(f['fn'], pf) for pf in path_filters ]):
-                    logger.debug("{} - Skipping '{}' as didn't match module path filters".format(sp_key, f['fn']))
+            # Filter out files based on exclusion patterns
+            if path_filters_exclude and len(path_filters_exclude) > 0:
+                exlusion_hits = (fnmatch.fnmatch(report.last_found_file, pfe) for pfe in path_filters_exclude)
+                if any(exlusion_hits):
+                    logger.debug("{} - Skipping '{}' as it matched the path_filters_exclude for '{}'".format(sp_key, f['fn'], self.name))
                     continue
 
-            # Make a note of the filename so that we can report it if something crashes
-            report.last_found_file = os.path.join(f['root'],f['fn'])
+            # Filter out files based on inclusion patterns
+            if path_filters and len(path_filters) > 0:
+                inclusion_hits = (fnmatch.fnmatch(report.last_found_file, pf) for pf in path_filters)
+                if not any(inclusion_hits):
+                    logger.debug("{} - Skipping '{}' as it didn't match the path_filters for '{}'".format(sp_key, f['fn'], self.name))
+                    continue
+                else:
+                    logger.debug("{} - Selecting '{}' as it matched the path_filters for '{}'".format(sp_key, f['fn'], self.name))
 
             # Make a sample name from the filename
             f['s_name'] = self.clean_s_name(f['fn'], f['root'])
@@ -128,6 +138,11 @@ class BaseMultiqcModule(object):
             else:
                 sl = len(self.sections) + 1
                 anchor = '{}-section-{}'.format(self.anchor, sl)
+
+        # Skip if user has a config to remove this module section
+        if anchor in config.remove_sections:
+            logger.debug("Skipping section '{}' because specified in user config".format(anchor))
+            return
 
         # Sanitise anchor ID and check for duplicates
         anchor = report.save_htmlid(anchor)
@@ -175,6 +190,7 @@ class BaseMultiqcModule(object):
         :config.prepend_dirs: boolean, whether to prepend dir name to s_name
         :return: The cleaned sample name, ready to be used
         """
+        s_name_original = s_name
         if root is None:
             root = ''
         if config.prepend_dirs:
@@ -217,6 +233,8 @@ class BaseMultiqcModule(object):
 
         # Remove trailing whitespace
         s_name = s_name.strip()
+        if s_name == '':
+            s_name = s_name_original
 
         return s_name
 

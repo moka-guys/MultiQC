@@ -80,12 +80,19 @@ def plot (data, pconfig=None):
 
     # Generate the data dict structure expected by HighCharts series
     plotdata = list()
-    for d in data:
+    for data_index, d in enumerate(data):
         thisplotdata = list()
+
         for s in sorted(d.keys()):
+
+            # Ensure any overwritting conditionals from data_labels (e.g. ymax) are taken in consideration
+            series_config = pconfig.copy()
+            if 'data_labels' in pconfig and type(pconfig['data_labels'][data_index]) is dict:  # if not a dict: only dataset name is provided
+                series_config.update(pconfig['data_labels'][data_index])
+
             pairs = list()
             maxval = 0
-            if 'categories' in pconfig:
+            if 'categories' in series_config:
                 pconfig['categories'] = list()
                 for k in d[s].keys():
                     pconfig['categories'].append(k)
@@ -94,24 +101,24 @@ def plot (data, pconfig=None):
             else:
                 for k in sorted(d[s].keys()):
                     if k is not None:
-                        if 'xmax' in pconfig and float(k) > float(pconfig['xmax']):
+                        if 'xmax' in series_config and float(k) > float(series_config['xmax']):
                             continue
-                        if 'xmin' in pconfig and float(k) < float(pconfig['xmin']):
+                        if 'xmin' in series_config and float(k) < float(series_config['xmin']):
                             continue
                     if d[s][k] is not None:
-                        if 'ymax' in pconfig and float(d[s][k]) > float(pconfig['ymax']):
+                        if 'ymax' in series_config and float(d[s][k]) > float(series_config['ymax']):
                             continue
-                        if 'ymin' in pconfig and float(d[s][k]) < float(pconfig['ymin']):
+                        if 'ymin' in series_config and float(d[s][k]) < float(series_config['ymin']):
                             continue
                     pairs.append([k, d[s][k]])
                     try:
                         maxval = max(maxval, d[s][k])
                     except TypeError:
                         pass
-            if maxval > 0 or pconfig.get('hide_empty') is not True:
+            if maxval > 0 or series_config.get('hide_empty') is not True:
                 this_series = { 'name': s, 'data': pairs }
                 try:
-                    this_series['color'] = pconfig['colors'][s]
+                    this_series['color'] = series_config['colors'][s]
                 except:
                     pass
                 thisplotdata.append(this_series)
@@ -334,13 +341,13 @@ def matplotlib_linegraph (plotdata, pconfig=None):
         ymin = default_ylimits[0]
         if 'ymin' in pconfig:
             ymin = pconfig['ymin']
-        elif 'yCeiling' in pconfig:
-            ymin = min(pconfig['yCeiling'], default_ylimits[0])
+        elif 'yFloor' in pconfig:
+            ymin = max(pconfig['yFloor'], default_ylimits[0])
         ymax = default_ylimits[1]
         if 'ymax' in pconfig:
             ymax = pconfig['ymax']
-        elif 'yFloor' in pconfig:
-            ymax = max(pconfig['yCeiling'], default_ylimits[1])
+        elif 'yCeiling' in pconfig:
+            ymax = min(pconfig['yCeiling'], default_ylimits[1])
         if (ymax - ymin) < pconfig.get('yMinRange', 0):
             ymax = ymin + pconfig['yMinRange']
         axes.set_ylim((ymin, ymax))
@@ -355,13 +362,13 @@ def matplotlib_linegraph (plotdata, pconfig=None):
         xmin = default_xlimits[0]
         if 'xmin' in pconfig:
             xmin = pconfig['xmin']
-        elif 'xCeiling' in pconfig:
-            xmin = min(pconfig['xCeiling'], default_xlimits[0])
+        elif 'xFloor' in pconfig:
+            xmin = max(pconfig['xFloor'], default_xlimits[0])
         xmax = default_xlimits[1]
         if 'xmax' in pconfig:
             xmax = pconfig['xmax']
-        elif 'xFloor' in pconfig:
-            xmax = max(pconfig['xCeiling'], default_xlimits[1])
+        elif 'xCeiling' in pconfig:
+            xmax = min(pconfig['xCeiling'], default_xlimits[1])
         if (xmax - xmin) < pconfig.get('xMinRange', 0):
             xmax = xmin + pconfig['xMinRange']
         axes.set_xlim((xmin, xmax))
